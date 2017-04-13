@@ -46,11 +46,11 @@ module Enumerable
     return all
   end
 
-#print [1,2,3,4].my_all? {|item| item >= 1} #=> true
-#print [1,2,3,4].my_all? {|item| item >= 4} #=> false
+#puts [1,2,3,4].my_all? {|item| item >= 1} #=> true
+#puts [1,2,3,4].my_all? {|item| item >= 4} #=> false
 
   def my_any?
-    seflArr = self.to_a
+    selfArr = self.to_a
     any = false
     for i in 0...selfArr.length
       if yield(selfArr[i])
@@ -61,6 +61,25 @@ module Enumerable
     end
     return any
   end
+
+#puts [1,2,3,4].my_any?{|item| item >=3}
+
+  def my_none?
+    selfArr = self.to_a
+    counter = 0
+    for i in 0...selfArr.length
+      if yield(selfArr[i])
+      else
+        counter += 1
+      end
+    end
+    if counter == selfArr.length
+      return true
+    else
+      return false
+    end
+  end
 end
 
-print [1,2,3,4].my_any?{|item| item >=3}
+puts [1,2,3].my_none? {|item| item > 2} #=>false
+puts [1,2,3].my_none? {|item| item > 4} #=>true
