@@ -79,7 +79,36 @@ module Enumerable
       return false
     end
   end
+
+#puts [1,2,3].my_none? {|item| item > 2} #=>false
+#puts [1,2,3].my_none? {|item| item > 4} #=>true
+
+  def my_count(param = nil)
+    selfArr = self.to_a
+    if param
+      counterSpecific = 0
+      for i in 0...selfArr.length
+        if selfArr[i] == param
+          counterSpecific += 1
+        else
+        end
+      end
+      return counterSpecific
+    elsif block_given?
+      counter = 0
+      for i in 0...selfArr.length
+        if yield(selfArr[i])
+          counter += 1
+        else
+        end
+      end
+      return counter
+    else
+      return selfArr.length
+    end
+  end
 end
 
-puts [1,2,3].my_none? {|item| item > 2} #=>false
-puts [1,2,3].my_none? {|item| item > 4} #=>true
+puts [1,2,4,5,6,4].my_count(4) #=> 2
+puts [1,2,4,5,6,4].my_count #=> 6
+puts [1,2,4,5,6,4].my_count {|x| x > 2} #=> 4
