@@ -114,12 +114,14 @@ module Enumerable
 #puts [1,2,4,5,6,4].my_count {|x| x > 2} #=> 4
 
 
-  def my_map
+  def my_map (proc=nil)
     selfArr = self.to_a
     newArr = []
     for i in 0...selfArr.length
       if block_given?
         newArr.push(yield(selfArr[i]))
+      elsif proc
+        newArr.push(proc.call(selfArr[i]))
       else
         newArr.push(selfArr[i])
       end
@@ -127,13 +129,15 @@ module Enumerable
     return newArr
   end
 
-#print (1..3).my_map #=> [1,2,3]
-#print [1,2,3].my_map {|x| x * 2} #=> [2,4,6]
+prok = Proc.new {|x| x * 3 }
+print [1,2,3].my_map(prok) #=> [3,6,9]
+print (1..3).my_map #=> [1,2,3]
+print [1,2,3].my_map {|x| x * 2} #=> [2,4,6]
 
   def my_inject(initial = nil, sym = nil)
       selfArr = self.to_a
       cumulative = 0
-      if initial
+      if initial && initial.class.name != "Symbol"
         selfArr.insert(0, initial)
       else
       end
@@ -145,20 +149,36 @@ module Enumerable
           else
             toAccum = yield(toAccum,selfArr[i])
           end
-        else
+        elsif initial.class.name == "Symbol"
           if i == 0
           elsif i == 1
-            toAccum = sym.send(selfArr[i-1],selfArr[i])
+            toAccum = selfArr[i-1].send(initial,selfArr[i])
           else
-            toAccum = sym.send(toAccum,selfArr[i])
+            toAccum = toAccum.send(initial,selfArr[i])
+          end
+        elsif initial && sym
+          if i == 0
+          elsif i == 1
+            toAccum = selfArr[i-1].send(sym,selfArr[i])
+          else
+            toAccum = toAccum.send(sym,selfArr[i])
           end
         end
       end
+      return toAccum
   end
 end
-
+=begin
 a= [1,2,3]
-puts a.inject(:+) # => 6
-puts a.inject(2, :+) # =>8
-puts a.inject(2) {|cumulative, item| cumulative*item} # =>12
-puts a.inject{|cumulative,item| cumulative*item} # => 6
+puts a.my_inject(:+) # => 6
+puts a.my_inject(2, :+) # =>8
+b=[1,2,3]
+puts b.my_inject{|cumulative,item| cumulative*item} # => 6
+puts b.my_inject(2) {|cumulative, item| cumulative*item} # =>12
+=end
+def multiply_els arr
+  return arr.my_inject(:*)
+end
+
+
+#puts multiply_els([2,4,5])
