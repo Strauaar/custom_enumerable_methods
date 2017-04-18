@@ -114,7 +114,7 @@ module Enumerable
 #puts [1,2,4,5,6,4].my_count {|x| x > 2} #=> 4
 
 
-  def my_map (proc=nil)
+  def my_map (proc = nil)
     selfArr = self.to_a
     newArr = []
     for i in 0...selfArr.length
